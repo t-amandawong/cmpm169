@@ -1,8 +1,8 @@
-// project.js - purpose and description here
-// Author: Your Name
-// Date:
+// project.js - Experiment 2: Vector Art, Animation, and Interactivity
+// Author: Thanyared Wong
+// Date: 2024.01.22
 
-// NOTE: This is how we might start a basic JavaaScript OOP project
+// NOTE: This is how we might start a basic JavaScript OOP project
 
 // Constants - User-servicable parts
 // In a longer project I like to put these in a separate file
