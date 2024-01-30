@@ -2,6 +2,8 @@
 // Author: Thanyared Wong
 // Date: 2024.01.29
 
+// my ChatGPT conversation: https://chat.openai.com/share/317282c5-c5a5-457d-9dc0-df00a8deac58
+
 // this function made with help from ChatGPT
 // draws a vertical gradient given x, y, width, height, and start and end colors
 function verticalGradient(x, y, w, h, startColour, endColour) {
