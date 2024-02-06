@@ -11,7 +11,6 @@ let speed = 0.01    // speed that dots are moving
 let lineWeight = 2;
 
 function setup() {
-    // canvas sizing code by Jackie Sanchez
     canvasContainer = $('#canvas-container');
     let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
     canvas.parent("canvas-container");
