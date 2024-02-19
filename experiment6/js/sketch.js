@@ -1,31 +1,25 @@
-// sketch.js - purpose and description here
-// Author: Your Name
-// Date:
-
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
-
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
+// sketch.js - Text Art
+// Author: Thanyared Wong
+// Date: 2024.02.18
 
 // Globals
-let myInstance;
+const sizeOfText = 32;
 let canvasContainer;
+let myFont;
+let lyrics;
+let currentLine = 0; // Index of the current line being displayed
+let alpha = 0; // Opacity of the text
+let fadingIn = true; // Whether the text is currently fading in or out
+let lastChangeTime; // When the last fade change happened
+let displayDuration = 1500; // How long to display each line fully visible
+let fadeDuration = 1000; // Duration of fade in/out
+let iter = 0 // line number on each stanza
 
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
-
-    myMethod() {
-        // code to run when method is called
-    }
+function preload() {
+    myFont = loadFont('./assets/FePIit2.ttf');
+    lyrics = loadStrings('./assets/folklore.txt');
 }
 
-// setup() function is called once when the program starts
 function setup() {
     // place our canvas, making it fit our container
     canvasContainer = $("#canvas-container");
@@ -36,32 +30,45 @@ function setup() {
         console.log("Resizing...");
         resizeCanvas(canvasContainer.width(), canvasContainer.height());
     });
-    // create an instance of the class
-    myInstance = new MyClass(VALUE1, VALUE2);
 
-    var centerHorz = windowWidth / 2;
-    var centerVert = windowHeight / 2;
+    textFont(myFont, sizeOfText);
+    lastChangeTime = millis()
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
-    background(220);    
-    // call a method on the instance
-    myInstance.myMethod();
+    background(220); 
 
-    // Put drawings here
-    var centerHorz = canvasContainer.width() / 2 - 125;
-    var centerVert = canvasContainer.height() / 2 - 125;
-    fill(234, 31, 81);
-    noStroke();
-    rect(centerHorz, centerVert, 250, 250);
-    fill(255);
-    textStyle(BOLD);
-    textSize(140);
-    text("p5*", centerHorz + 10, centerVert + 200);
+    let currentTime = millis()
+    let timeElapsedSinceChange = currentTime - lastChangeTime
+    if (fadingIn) {
+        if (timeElapsedSinceChange < fadeDuration) {
+            alpha = map(timeElapsedSinceChange, 0, fadeDuration, 0, 255)
+        } else {
+            alpha = 255;
+            if (timeElapsedSinceChange > fadeDuration + displayDuration) {
+                fadingIn = false;
+                lastChangeTime = currentTime
+            }
+        }
+    } else {
+        if (timeElapsedSinceChange < fadeDuration) {
+            alpha = map(timeElapsedSinceChange, 0, fadeDuration, 255, 0)
+        } else {
+            currentLine = (currentLine + 1) % lyrics.length
+            fadingIn = true;
+            lastChangeTime = currentTime
+            if (lyrics[currentLine].length == 0) {
+                iter = -1
+            } else {
+                iter += 1
+            }
+        }
+    }
+    print(iter)
+    fill(0, 0, 0, alpha);
+    text(lyrics[currentLine], sizeOfText, (2 * sizeOfText) + (iter * sizeOfText))
 }
 
-// mousePressed() function is called once after every time a mouse button is pressed
 function mousePressed() {
     // code to run when mouse is pressed
 }
