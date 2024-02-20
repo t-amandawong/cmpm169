@@ -123,12 +123,13 @@ function keyPressed() {
         savedText = currentText; // Save the current text
         currentText = ''; // Reset current text for new input
 
-        song = savedText.replace(/ +/g, '_')
-        song = song.trim()
+        song = savedText.trim()
+        song = song.replace(/ +/g, '_')
         let index = songTitles.indexOf(song)
+        console.log(song, index)
         if (index != -1) {
             lyrics = songsLyrics[index]
-            title = savedText
+            title = song.replace(/_/g, ' ')
         } else {
             lyrics = random(songsLyrics)
             let index = songsLyrics.indexOf(lyrics)
