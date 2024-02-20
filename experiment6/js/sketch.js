@@ -2,6 +2,9 @@
 // Author: Thanyared Wong
 // Date: 2024.02.18
 
+// ChatGPT link
+// https://chat.openai.com/share/758815ab-f303-4a38-991e-ea8cfdc74ea7
+
 // Globals
 const sizeOfText = 32;
 const blobSize = 10;
