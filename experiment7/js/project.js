@@ -1,42 +1,56 @@
-// project.js - observable
+// project.js - visualizing baskin engineering majors by gender
 // Author: Thanyared Wong
-// Date: 2024.02.26
-
-// Import Observable Plot with the included D3 capabilities
+// Date: 2024.02.28
 import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
 
-async function createGenderDistributionPlot(csvFilePath) {
-    // Load the CSV data directly using Plot
-    const data = await Plot.csv(csvFilePath);
+document.addEventListener("DOMContentLoaded", function() {
+  fetch('./assets/BEgenders.csv')
+      .then(response => response.text())
+      .then(csvText => d3.csvParse(csvText))
+      .then(processData)
+      .then(createPlot);
+});
 
-    // Creating a plot that compares the number of women and men in each major
-    const plot = Plot.plot({
-        x: {
-            grid: true,
-            label: "Number of Students"
-        },
-        y: {
-            grid: true,
-            label: "Major"
-        },
-        color: {
-            legend: true
-        },
-        marks: [
-            Plot.barY(data, Plot.groupY({x: "sum"}, {y: "name", fill: "gender", z: "count"}))
-        ],
-        facet: {
-            data: data.map(d => ({...d, gender: "Women", count: d.women})).concat(
-                   data.map(d => ({...d, gender: "Men", count: d.men}))
-                 ),
-            y: "gender"
-        }
-    });
+function processData(data) {
+  const students = [];
+  data.forEach((department) => {
+      let major = department.Major;
+      let words = department.Major.split(' ');
+      if (words.length >= 3) {
+          major = words.slice(0,2).join(' ') + '\n' + words.slice(2).join(' ');
+      }
+      let women = Math.ceil(department.Women);
+      let men = Math.ceil(department.Men);
+      let total = Math.ceil(department.Total);
+      let neither = total - (women + men);
 
-    // Append the plot to the document
-    document.body.appendChild(plot);
+      let percentWomen = women / total;
+      let percentMen = men / total;
+      let percentNeither = neither / total;
+
+      for(let i = 0; i < women; i++) {
+          students.push({major: major, gender: 'female', count: i, percent: percentWomen});
+      }
+      for(let i = 0; i < men; i++) {
+          students.push({major: major, gender: 'male', count: women + i, percent: percentMen});
+      }
+      for(let i = 0; i < neither; i++) {
+          students.push({major: major, gender: 'neither/decline to state', count: women + men + i, percent: percentNeither});
+      }
+  });
+  return students;
 }
 
-// Call the function with the path to your CSV file
-createGenderDistributionPlot("assets/BEgenders.csv");
-document.querySelector("#canvs").appendChild(plot);
+function createPlot(students) {
+  const plot = Plot.plot({
+      x: {axis: {labelAngle: -45}},
+      y: {grid: true},
+      color: {legend: true},
+      width: 1200,
+      height: 600,
+      marks: [
+          Plot.dot(students, Plot.dodgeX({fx: "major", y: 'count', fill: "gender", channels: {major: 'major', gender: "gender", percentOfMajor: 'percent'}, tip: true}))
+      ]
+  });
+  document.getElementById("canvas-container").appendChild(plot);
+}
